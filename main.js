@@ -1,38 +1,44 @@
-app = require('express.io')()
-app.http().io()
 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-}
+var express = require('express');
+var app = express();
+var path = require('path');
+cors = require('cors')
 
+// app.http().io()
 
-app.use(allowCrossDomain);
+// app.use(cors());
 
+var corsOptions = {
+  credentials: false
+};
 
-// Setup the ready route, and emit talk event.
-app.io.route('ready', function(req) {
-    req.io.emit('talk', { 
-        message: 'io event from an io route on the server'
-    })
-})
+app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.io.route('join', function(req) {
-	var room = req.data.room
-	req.io.join(room);
-	req.io.room(room).broadcast('announce', {
-        message: 'New client' + req.data.id +' in the ' + room + ' room. '
-    })
-})
+// // Setup the ready route, and emit talk event.
+// app.io.route('ready', function(req) {
+//     req.io.emit('talk', { 
+//         message: 'io event from an io route on the server'
+//     })
+// })
 
-app.io.route('send', function(req) {
-	var room = req.data.room
-	var data = req.data.data
-	req.io.join(room);
-	req.io.room(room).broadcast('message', data);
-})
+// app.io.route('join', function(req) {
+// 	var room = req.data.room
+// 	req.io.join(room);
+// 	req.io.room(room).broadcast('announce', {
+//         message: 'New client' + req.data.id +' in the ' + room + ' room. '
+//     })
+//     console.log({
+//         message: 'New client' + req.data.id +' in the ' + room + ' room. '
+//     })
+// })
+
+// app.io.route('send', function(req) {
+// 	var room = req.data.room
+// 	var data = req.data.data
+// 	req.io.join(room);
+// 	req.io.room(room).broadcast('message', data);
+// })
 
 
 /*
@@ -67,6 +73,8 @@ app.get('/', function(req, res) {
 
 	res.send(data);
 });
+
+
 
 /*
 	CREATE A NEW SHAREBOX
